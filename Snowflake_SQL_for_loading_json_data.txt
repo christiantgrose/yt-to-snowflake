@@ -1,0 +1,66 @@
+--Create a temp table with a single column 'variant' to load your data into--
+
+CREATE OR REPLACE temporary TABLE ctg_emp_table (ctg_json_data  variant );
+
+--Create a file format to load your json data--
+
+CREATE OR REPLACE FILE FORMAT my_json_file_format
+    type = json;
+
+--Create an external stage to your stored data, for me this was to an S3 bucket, you may also have to add your access keys--
+
+CREATE STAGE json_yt
+  STORAGE_INTEGRATION = s3_int
+  URL = 's3://mybucket/encrypted_files/'
+  FILE_FORMAT = my_json_file_format;
+
+  --Check your stage now shows your S3 bucket--
+  
+LIST @json_yt;
+
+--Copy the file you want to load from your external stage and into the temporary table you created earlier--
+
+COPY INTO ctg_emp_table
+FROM '@json_yt/trending_videos_uk.json'
+file_format = my_json_file_format;
+
+--Check the table is now populated with the json file--
+
+SELECT * FROM ctg_emp_table;
+
+-- Create a view that flattens the JSON data into separate rows--
+
+CREATE OR REPLACE VIEW normalized_videos AS
+SELECT
+    -- Extract fields from the JSON data--
+    item.value:videoId::string AS video_id,
+    item.value:snippet.title::string AS title,
+    item.value:snippet.description::string AS description,
+    item.value:snippet.publishedAt::timestamp AS published_at,
+    item.value:snippet.channelId::string AS channel_id,
+    item.value:snippet.channelTitle::string AS channel_title,
+    item.value:snippet.thumbnails.default.url::string AS thumbnail_url,
+    item.value:snippet.tags::variant AS tags,
+    item.value:statistics.viewCount::number AS view_count,
+    item.value:statistics.likeCount::number AS like_count,
+    item.value:statistics.commentCount::number AS comment_count,
+    -- Add a field to identify the source of the data--
+    'youtube' AS source
+FROM ctg_emp_table, LATERAL FLATTEN(INPUT => parse_json(CTG_JSON_DATA):items) item;
+
+--Check the view to see the now normalised data--
+
+SELECT * FROM normalized_videos;
+
+--Create a table from the view--
+
+CREATE TABLE normal_yt_data AS
+SELECT * FROM normalized_videos;
+
+--Check the table has the data loaded into it--
+
+SELECT * FROM normal_yt_data;
+
+--If you want to start altering the table and dropping columns, you can do so as shown below--
+
+ALTER TABLE normal_yt_data DROP COLUMN source;
