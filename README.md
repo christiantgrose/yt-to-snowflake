@@ -4,15 +4,15 @@
 
 The JSON data is then loaded into a table with a single VARIANT column. A view is created from this table to flatten and normalize the JSON data. Finally, the normalized data is used to create a new table.</p>
 
-<b>Project Objective<b/>
+<b>Project Objective</b>
 
 <p>The main objective of this project is to demonstrate the ability to extract data from a web source, store it in the cloud, and normalize it for use in data analytics.</p>
 
-<b>Data Sources<b/>
+<b>Data Sources</b>
 
 <p>The data source for this project is YouTube. The data is scraped using a Python script and stored in a JSON file.</p>
 
-<b>Technologies Used<b/>
+<b>Technologies Used</b>
 
 <p>
 The following technologies were used in this project:
@@ -22,7 +22,7 @@ The following technologies were used in this project:
 <li>Snowflake</li>
 </ul></p>
 
-<b>Accomplishments<b/>
+<b>Accomplishments</b>
 <p>
 The following accomplishments were achieved in this project:
 <ul>
@@ -59,6 +59,6 @@ Once you have access to these resources, you can follow these steps:
 
 This project is licensed under the MIT License. See the LICENSE file for details.
 
-<b>Contact<b/>
+<b>Contact</b>
 
 If you have any questions or feedback, please feel free to contact me at christiantgrose@gmail.com.
