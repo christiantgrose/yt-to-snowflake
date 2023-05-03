@@ -35,6 +35,7 @@ The following accomplishments were achieved in this project:
 </ul></p>
 
 <b>Usage</b>
+
 To run this project, you will need access to the following:
 
 <ul>
